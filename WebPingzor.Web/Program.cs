@@ -45,7 +45,7 @@ app.MapRazorComponents<WebPingzor.Web.Components.App>()
     .AddAdditionalAssemblies(
         typeof(WebPingzor.Monitoring.MonitoringModule).Assembly,
         typeof(WebPingzor.Authentication.AuthenticationModule).Assembly,
-        typeof(WebPingzor.Transactions.TransactionsModule).Assembly,
+        typeof(WebPingzor.Counters.CountersModule).Assembly,
         typeof(WebPingzor.UserManagement.UserManagementModule).Assembly,
         typeof(WebPingzor.Data.DataModule).Assembly
     );

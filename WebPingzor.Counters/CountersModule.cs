@@ -1,8 +1,8 @@
 using Microsoft.Extensions.DependencyInjection;
 
-namespace WebPingzor.Transactions;
+namespace WebPingzor.Counters;
 
-public static class TransactionsModule
+public static class CountersModule
 {
   public static void ConfigureServices(IServiceCollection services)
   {

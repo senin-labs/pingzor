@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebPingzor.UserManagement",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebPingzor.Web.Client", "WebPingzor.Web.Client\WebPingzor.Web.Client.csproj", "{B6D19EF2-09CB-47A4-AEF6-27FDE47F8F31}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebPingzor.Transactions", "WebPingzor.Transactions\WebPingzor.Transactions.csproj", "{0E9EC348-84FA-40C9-B34D-0FB1C3785ECE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebPingzor.Counters", "WebPingzor.Counters\WebPingzor.Counters.csproj", "{0E9EC348-84FA-40C9-B34D-0FB1C3785ECE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebPingzor.Todos", "WebPingzor.Todos\WebPingzor.Todos.csproj", "{9D0FF54B-1D43-4C7C-807C-BB9741BC12C5}"
 EndProject

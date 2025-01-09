@@ -10,7 +10,7 @@
     <ProjectReference Include="../WebPingzor.Authentication/WebPingzor.Authentication.csproj" />
     <ProjectReference Include="../WebPingzor.Monitoring/WebPingzor.Monitoring.csproj" />
     <ProjectReference Include="../WebPingzor.Web.Client/WebPingzor.Web.Client.csproj" />
-    <ProjectReference Include="../WebPingzor.Transactions/WebPingzor.Transactions.csproj" />
+    <ProjectReference Include="../WebPingzor.Counters/WebPingzor.Counters.csproj" />
     <ProjectReference Include="../WebPingzor.UserManagement/WebPingzor.UserManagement.csproj" />
     <ProjectReference Include="../WebPingzor.Todos/WebPingzor.Todos.csproj" />
     <ProjectReference Include="../WebPingzor.UserManagement/WebPingzor.UserManagement.csproj" />
