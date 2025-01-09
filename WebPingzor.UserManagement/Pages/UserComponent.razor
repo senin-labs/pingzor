@@ -1,0 +1,11 @@
+<button @onclick="IncrementCount">Incrementttt: @currentCount</button>
+
+@code {
+  private int currentCount = 0;
+
+  private void IncrementCount()
+  {
+    currentCount++;
+    Console.WriteLine("Incrementing count");
+  }
+}

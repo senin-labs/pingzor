@@ -1,0 +1,18 @@
+﻿@page "/transactions"
+@rendermode InteractiveServer
+
+@using WebPingzor.Transactions.Components
+
+<h1>Hello, Transactions !</h1>
+
+Welcome to your new app.
+
+<TransactionComponent />
+
+
+@code {
+  protected override void OnInitialized()
+  {
+    Console.WriteLine("TransactionsPage.OnInitialized");
+  }
+}

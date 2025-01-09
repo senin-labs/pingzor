@@ -1,0 +1,11 @@
+<button @onclick="IncrementCount">users details: @currentCount</button>
+
+@code {
+  private int currentCount = 0;
+
+  private void IncrementCount()
+  {
+    currentCount++;
+    Console.WriteLine("Incrementing user details");
+  }
+}

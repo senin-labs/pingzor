@@ -1,0 +1,15 @@
+﻿<div class="my-component">
+    This component is defined in the <strong>WebPingzor.Todos</strong> library.
+</div>
+
+<button @onclick="IncrementCount">Todos: @currentCount</button>
+
+@code {
+    private int currentCount = 0;
+
+    private void IncrementCount()
+    {
+        currentCount++;
+        Console.WriteLine("Todos detailsss");
+    }
+}

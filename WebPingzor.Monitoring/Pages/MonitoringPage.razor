@@ -1,0 +1,53 @@
+@page "/monitoring"
+@using WebPingzor.Data.Models
+@inject WebPingzor.Data.PingzorDbProvider dbProvider
+
+@attribute [StreamRendering]
+
+<h1>Welcome to monitoring</h1>
+
+<TestComp />
+
+@if (monitors == null)
+{
+  <p>Loading...</p>
+}
+else
+{
+  <table class="table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Url</th>
+      <th>Interval</th>
+    </tr>
+  </thead>
+  <tbody>
+    @foreach (var monitor in monitors)
+      {
+        <tr>
+          <td>@monitor.Name</td>
+          <td>@monitor.Url</td>
+          <td>@monitor.Interval</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}
+
+
+@code {
+  record MonitorItem(string Name, string Url, int Interval);
+
+  private List<MonitorItem>? monitors;
+  protected async override Task OnInitializedAsync()
+  {
+    Console.WriteLine("MonitoringPage.OnInitialized");
+
+    using var db = dbProvider.Create();
+
+    this.monitors = await db.HttpMonitors
+    .Select(m => new MonitorItem(m.Name, m.Url, m.Interval))
+    .ToListAsync();
+  }
+}

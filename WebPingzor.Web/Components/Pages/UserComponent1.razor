@@ -1,0 +1,11 @@
+@using WebPingzor.UserManagement
+<button @onclick="IncrementCount">Increment: @currentCount</button>
+
+@code {
+  private int currentCount = 0;
+
+  private void IncrementCount()
+  {
+    currentCount++;
+  }
+}
