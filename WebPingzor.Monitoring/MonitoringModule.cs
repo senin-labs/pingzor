@@ -6,6 +6,6 @@ public static class MonitoringModule
 {
   public static void ConfigureServices(IServiceCollection services)
   {
-
+    services.AddScoped<MonitorService>();
   }
 }

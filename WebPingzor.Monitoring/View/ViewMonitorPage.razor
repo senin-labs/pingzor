@@ -1,0 +1,74 @@
+@page "/monitors/{monitorId:int}"
+@using WebPingzor.Data.Models
+@inject WebPingzor.Monitoring.MonitorService monitorService
+
+@rendermode InteractiveServer
+
+@if (notFound)
+{
+  <Paragraph>Monitor not found</Paragraph>
+}
+else if (monitor == null)
+{
+  <Paragraph>Loading</Paragraph>
+}
+else
+{
+  <Title Level="2" Editable EditConfig="titleConfig">@monitor.Name</Title>
+}
+
+@code {
+  [Parameter]
+  public int MonitorId { get; set; }
+  private record Interval(int Value, string Text);
+
+  private Interval[] intervals = new[]
+  {
+new Interval(60, "1 minute"),
+new Interval(120, "2 minutes"),
+new Interval(300, "5 minutes"),
+new Interval(600, "10 minutes"),
+new Interval(1800, "30 minutes"),
+new Interval(3600, "1 hour"),
+new Interval(7200, "2 hours"),
+new Interval(14400, "4 hours"),
+new Interval(28800, "8 hours"),
+new Interval(43200, "12 hours"),
+new Interval(86400, "1 day"),
+};
+
+  private HttpMonitor? monitor;
+
+  TypographyEditableConfig? titleConfig;
+  private bool isSubmitting = false;
+  private bool notFound = false;
+  protected async override Task OnInitializedAsync()
+  {
+    await base.OnInitializedAsync();
+    var m = await monitorService.GetById(this.MonitorId);
+
+    if (m == null)
+    {
+      notFound = true;
+    }
+    else
+    {
+      monitor = m;
+      titleConfig = new TypographyEditableConfig
+        {
+          OnChange = OnTitleChange,
+          AutoSize = false
+        };
+    }
+  }
+
+  private void OnTitleChange(string value)
+  {
+    if (monitor != null)
+    {
+      monitor.Name = value;
+      Console.WriteLine("Title changed" + " " + value);
+      @* await monitorService.Update(monitor); *@
+    }
+  }
+}

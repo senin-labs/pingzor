@@ -1,0 +1,73 @@
+<Form @ref="form" Model="@Model" Layout="FormLayout.Vertical" OnFinish="OnFinish" OnFinishFailed="OnFinishFailed">
+  <FormItem Label="Name" Required>
+    <Input @bind-Value="@context.Name" />
+  </FormItem>
+
+  <FormItem Label="Url" Required>
+    <Input @bind-Value="@context.Url" />
+  </FormItem>
+
+  <FormItem Label="Interval" Required>
+    <Select Mode="SelectMode.Default" DataSource="@intervals" @bind-Value="@context.Interval"
+      LabelName="@nameof(Interval.Text)" ValueName="@nameof(Interval.Value)">
+    </Select>
+  </FormItem>
+
+  <FormItem>
+    <Button HtmlType="submit" Loading="isSubmitting" Disabled="!(form?.IsModified ?? false)">
+      Submit
+    </Button>
+  </FormItem>
+</Form>
+
+
+@code {
+  private record Interval(int Value, string Text);
+  public class FormModel
+  {
+    public string Name { get; set; } = "";
+    public string Url { get; set; } = "";
+    public int Interval { get; set; } = 60;
+  }
+
+  private Interval[] intervals = new[]
+  {
+new Interval(60, "1 minute"),
+new Interval(120, "2 minutes"),
+new Interval(300, "5 minutes"),
+new Interval(600, "10 minutes"),
+new Interval(1800, "30 minutes"),
+new Interval(3600, "1 hour"),
+new Interval(7200, "2 hours"),
+new Interval(14400, "4 hours"),
+new Interval(28800, "8 hours"),
+new Interval(43200, "12 hours"),
+new Interval(86400, "1 day"),
+};
+
+  [Parameter]
+  public required FormModel Model { get; set; }
+
+  [Parameter]
+  public required EventCallback<EditContext> OnSubmit { get; set; }
+
+  [Parameter]
+  public EventCallback<EditContext> OnValidationErrors { get; set; }
+
+  private bool isSubmitting = false;
+  private Form<FormModel>? form;
+
+  private async Task OnFinish(EditContext editContext)
+  {
+    isSubmitting = true;
+
+    await OnSubmit.InvokeAsync(editContext);
+
+    isSubmitting = false;
+  }
+
+  private void OnFinishFailed(EditContext editContext)
+  {
+    OnValidationErrors.InvokeAsync(editContext);
+  }
+}

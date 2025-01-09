@@ -1,0 +1,49 @@
+@page "/monitors/{monitorId:int}/edit"
+
+@using WebPingzor.Data.Models
+@inject WebPingzor.Monitoring.MonitorService monitorService
+
+@rendermode InteractiveServer
+
+<Title Level="2">Edit </Title>
+
+<MonitorForm Model="@model" OnSubmit="OnFormSubmit" OnValidationErrors="OnErrors" />
+
+
+@code {
+  [Parameter]
+  public required int MonitorId { get; set; }
+
+  private MonitorForm.FormModel? model;
+  private bool notFound = false;
+
+  protected async override Task OnInitializedAsync()
+  {
+    await base.OnInitializedAsync();
+    var m = await monitorService.GetById(this.MonitorId);
+    if (m == null)
+    {
+      notFound = true;
+      return;
+    }
+
+    model = new MonitorForm.FormModel
+      {
+        Name = m.Name,
+        Url = m.Url,
+        Interval = m.Interval
+      };
+  }
+
+  private async Task OnFormSubmit(EditContext editContext)
+  {
+    if (model == null) return;
+
+    await monitorService.Update(this.MonitorId, model.Name, model.Url, model.Interval);
+  }
+
+  private void OnErrors(EditContext editContext)
+  {
+    Console.WriteLine($"Failed:");
+  }
+}

@@ -1,0 +1,25 @@
+@page "/monitors/create"
+@using WebPingzor.Data.Models
+@inject WebPingzor.Monitoring.MonitorService monitorService
+
+@rendermode InteractiveServer
+
+<Title Level="2">Create monitor</Title>
+
+<MonitorForm Model="@model" OnSubmit="OnFormSubmit" OnValidationErrors="OnErrors" />
+
+@code {
+
+  private MonitorForm.FormModel model = new MonitorForm.FormModel();
+
+  private async Task OnFormSubmit(EditContext editContext)
+  {
+    var monitor = await monitorService.Create(model.Name, model.Url, model.Interval);
+    Console.WriteLine(monitor.Id);
+  }
+
+  private void OnErrors(EditContext editContext)
+  {
+    Console.WriteLine($"Failed:");
+  }
+}

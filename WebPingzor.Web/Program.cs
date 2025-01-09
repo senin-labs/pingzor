@@ -6,7 +6,10 @@ builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
 
 builder.Services.AddControllers();
+
+builder.Services.AddAntDesign();
 WebPingzor.Data.DataModule.ConfigureServerServices(builder.Services);
+WebPingzor.Monitoring.MonitoringModule.ConfigureServices(builder.Services);
 
 var app = builder.Build();
 

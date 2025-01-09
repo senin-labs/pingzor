@@ -1,0 +1,48 @@
+@page "/monitors"
+@using WebPingzor.Data.Models
+@inject MonitorService monitorService
+
+@attribute [StreamRendering]
+
+<Title Level="2">Monitors</Title>
+
+@if (monitors == null)
+{
+  <p>Loading...</p>
+}
+else
+{
+  <Table TItem="HttpMonitor" DataSource="@monitors">
+  <TitleTemplate>
+    <Flex Justify="FlexJustify.End" Gap="@("10")">
+      <NavLink href="/monitors/create">
+        <Button Type="ButtonType.Primary">Create</Button>
+      </NavLink>
+    </Flex>
+  </TitleTemplate>
+  <ColumnDefinitions>
+    <PropertyColumn Property="c=>c.Name">
+      <NavLink href="@string.Format("/monitors/{0}", context.Id)">@context.Name</NavLink>
+    </PropertyColumn>
+    <PropertyColumn Property="c=>c.Interval">
+      @context.Interval<span>s</span>
+    </PropertyColumn>
+    <PropertyColumn Property="c=>c.Interval">
+      <NavLink href="@string.Format("/monitors/{0}/edit", context.Id)">
+        <Button Type="ButtonType.Link">edit</Button>
+      </NavLink>
+    </PropertyColumn>
+  </ColumnDefinitions>
+</Table>
+}
+
+
+@code {
+  private List<HttpMonitor>? monitors;
+  protected async override Task OnInitializedAsync()
+  {
+    Console.WriteLine("MonitoringPage.OnInitialized");
+
+    this.monitors = await monitorService.GetAll();
+  }
+}
