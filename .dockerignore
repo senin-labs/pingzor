@@ -1,0 +1,10 @@
+.devcontainer
+iac
+bin
+obj
+.dockerignore
+.gitignore
+.git
+Dockerfile
+docker-compose.override.yml
+.env
