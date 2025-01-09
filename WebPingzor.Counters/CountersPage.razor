@@ -1,15 +1,44 @@
 ﻿@page "/counters"
 @rendermode InteractiveServer
 
+@inject CounterServiceSingleton singletonService
+@inject CounterServiceScoped scopedService
+@inject CounterServiceTransient transientService
+
 
 <h1>Hello, Counters !</h1>
 
 Welcome to your new app.
 
+<div>
+  Singleton: @singletonService.Counter <Button OnClick="@(() => singletonService.Increment())">Increment</Button>
+</div>
+
+<div>
+  Scoped: @scopedService.Counter <Button OnClick="@(() => scopedService.Increment())">Increment</Button>
+</div>
+
+<div>
+  Transient: @transientService.Counter <Button OnClick="@(() => transientService.Increment())">Increment</Button>
+</div>
+
+<div>
+  Local: @counter <Button OnClick="Increment">Increment</Button>
+</div>
+
 
 @code {
+
+  private int counter = 0;
   protected override void OnInitialized()
   {
     Console.WriteLine("CountersPage.OnInitialized");
+  }
+
+  protected void Increment()
+  {
+    counter++;
+    Console.WriteLine("LocalCounter: Incremented to {0}", counter);
+
   }
 }
