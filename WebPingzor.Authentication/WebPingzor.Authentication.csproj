@@ -18,6 +18,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="../WebPingzor.BlazorComponents/WebPingzor.BlazorComponents.csproj" />
+    <ProjectReference Include="../WebPingzor.Core/WebPingzor.Core.csproj" />
     <ProjectReference Include="../WebPingzor.Data/WebPingzor.Data.csproj" />
   </ItemGroup>
 

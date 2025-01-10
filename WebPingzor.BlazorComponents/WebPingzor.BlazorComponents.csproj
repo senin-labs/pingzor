@@ -1,20 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
-    <RootNamespace>WebPingzor.Counters</RootNamespace>
+    <RootNamespace>WebPingzor.BlazorComponents</RootNamespace>
+
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="9.0.0" />
+    <PackageReference Include="AntDesign" Version="1.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.0" />
-
   </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="../WebPingzor.BlazorComponents/WebPingzor.BlazorComponents.csproj" />
-  </ItemGroup>
-
 </Project>
