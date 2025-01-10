@@ -6,6 +6,7 @@ builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
 
 builder.Services.AddControllers();
+builder.Services.AddScoped<IPasswordHashingService, PasswordHashingService>();
 
 builder.Services.AddAntDesign();
 WebPingzor.Data.DataModule.ConfigureServerServices(builder.Services);
