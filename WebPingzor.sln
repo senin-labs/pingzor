@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
@@ -18,6 +18,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebPingzor.Web", "WebPingzor.Web\WebPingzor.Web.csproj", "{CEEA460E-1690-4B6B-BE7B-718A2878FA4A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebPingzor.Web.Client", "WebPingzor.Web.Client\WebPingzor.Web.Client.csproj", "{B6D19EF2-09CB-47A4-AEF6-27FDE47F8F31}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebPingzor.Core", "WebPingzor.Core\WebPingzor.Core.csproj", "{FBED5F92-B0D0-4CAF-B0B8-734F1897C7DB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

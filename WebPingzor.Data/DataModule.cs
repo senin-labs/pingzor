@@ -8,7 +8,7 @@ namespace WebPingzor.Data
     public static void ConfigureServerServices(IServiceCollection services)
     {
       services.AddDbContextFactory<PingzorDbContext>(opt =>
-opt.UseSqlite($"Data Source=__data/{nameof(PingzorDbContext)}.db"));
+opt.UseSqlite($"Data Source=__data/{nameof(PingzorDbContext)}1.db"));
 
       services.AddScoped<PingzorDbProvider>();
       services.AddScoped<UserService>();

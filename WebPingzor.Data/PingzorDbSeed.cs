@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 using WebPingzor.Data.Models;
+using WebPingzor.Core;
 
 namespace WebPingzor.Data;
 
@@ -10,26 +11,30 @@ public static class PingzorDbSeed
   public static async Task SeedAll(AsyncServiceScope scope)
   {
     var options = scope.ServiceProvider.GetRequiredService<DbContextOptions<PingzorDbContext>>();
+    var hashingService = scope.ServiceProvider.GetRequiredService<IPasswordHashingService>();
 
     await using var context = new PingzorDbContext(options);
     await context.Database.EnsureCreatedAsync();
-    await SeedUsers(context);
+    await SeedUsers(context, hashingService);
     await SeedHttpMonitors(context);
   }
 
-  public static async Task SeedUsers(PingzorDbContext context)
+  public static async Task SeedUsers(PingzorDbContext context, IPasswordHashingService passwordHashing)
   {
     if (context.Users.Any())
     {
       return;
     }
 
+    var salt = passwordHashing.GenerateSalt();
+    var hashedPassword = passwordHashing.HashPassword("password", salt);
+
     var users = new User[]
     {
-      new () { Name = "John Travolta", Email="john.travolta@email.com"},
-      new () { Name = "Tom Cruise", Email="tom.cruise@email.com"},
-      new () { Name = "Brad Pitt", Email="brad.pitt@email.com"},
-      new () { Name = "Angelina Jolie", Email="angelina.jolie@email.com"},
+      new () { Name = "John Travolta", Email="john.travolta@email.com", HashedPassword = hashedPassword, PasswordSalt = salt},
+      new () { Name = "Tom Cruise", Email="tom.cruise@email.com", HashedPassword = hashedPassword, PasswordSalt = salt},
+      new () { Name = "Brad Pitt", Email="brad.pitt@email.com", HashedPassword = hashedPassword, PasswordSalt = salt},
+      new () { Name = "Angelina Jolie", Email="angelina.jolie@email.com", HashedPassword = hashedPassword, PasswordSalt = salt},
     };
 
     foreach (var user in users)

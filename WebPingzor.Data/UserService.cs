@@ -1,12 +1,14 @@
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using WebPingzor.Data.Models;
+using WebPingzor.Core;
 
 namespace WebPingzor.Data;
 
-public class UserService(IDbContextFactory<PingzorDbContext> contextFactory)
+public class UserService(IDbContextFactory<PingzorDbContext> contextFactory, IPasswordHashingService passwordHashing)
 {
   private IDbContextFactory<PingzorDbContext> ContextFactory { get; } = contextFactory;
+  private IPasswordHashingService PasswordHashing { get; } = passwordHashing;
 
   public async Task<int> GetNumberOfUsers()
   {
@@ -22,11 +24,21 @@ public class UserService(IDbContextFactory<PingzorDbContext> contextFactory)
     return await context.Users.FindAsync(id);
   }
 
-  public async Task<User?> CreateUser(string name, string email)
+  public async Task<User?> CreateUser(string name, string email, string password)
   {
-    await Task.Delay(1000);
+    var salt = PasswordHashing.GenerateSalt();
+    var hashedPassword = PasswordHashing.HashPassword(password, salt);
+
     using var context = ContextFactory.CreateDbContext();
-    var user = new User { Name = name, Email = email };
+
+    var user = new User
+    {
+      Name = name,
+      Email = email,
+      HashedPassword = hashedPassword,
+      PasswordSalt = salt
+    };
+
     context.Users.Add(user);
     await context.SaveChangesAsync();
     return user;
