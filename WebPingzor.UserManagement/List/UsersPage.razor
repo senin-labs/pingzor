@@ -1,0 +1,44 @@
+@page "/users"
+@attribute [StreamRendering]
+
+@using WebPingzor.Data
+@using WebPingzor.Data.Models
+@using Microsoft.EntityFrameworkCore
+
+@inject PingzorDbProvider _dbProvider;
+
+<Title Level="2">Users</Title>
+
+@if (users == null)
+{
+  <p>Loading...</p>
+}
+else
+{
+  <Table TItem="UserRow" DataSource="@users">
+  <ColumnDefinitions>
+    <PropertyColumn Property="c=>c.Name">
+      @context.Name
+    </PropertyColumn>
+    <PropertyColumn Property="c=>c.Email">
+      @context.Email
+    </PropertyColumn>
+  </ColumnDefinitions>
+</Table>
+}
+
+
+@code {
+  private record UserRow(string Name, string Email);
+
+  private List<UserRow>? users;
+  protected async override Task OnInitializedAsync()
+  {
+    Console.WriteLine("UsersPage.OnInitialized");
+    using var dbContext = _dbProvider.Create();
+
+    this.users = await dbContext.Users
+    .Select(u => new UserRow(u.Name, u.Email))
+    .ToListAsync();
+  }
+}
