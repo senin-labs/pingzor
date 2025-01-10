@@ -1,3 +1,8 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Components.Authorization;
+using WebPingzor.Core;
+using WebPingzor.Web.Core;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -6,9 +11,25 @@ builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
 
 builder.Services.AddControllers();
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/login";
+        options.LogoutPath = "/logout";
+        options.AccessDeniedPath = "/access-denied";
+    });
+builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IPasswordHashingService, PasswordHashingService>();
 
+builder.Services.AddAuthorization();
+builder.Services.AddCascadingAuthenticationState();
+
 builder.Services.AddAntDesign();
+
+WebPingzor.Authentication.AuthenticationModule.ConfigureServices(builder.Services);
 WebPingzor.Data.DataModule.ConfigureServerServices(builder.Services);
 WebPingzor.Monitoring.MonitoringModule.ConfigureServices(builder.Services);
 WebPingzor.Counters.CountersModule.ConfigureServices(builder.Services);
@@ -36,6 +57,8 @@ app.UseHttpsRedirection();
 app.MapStaticAssets();
 app.UseRouting();
 app.UseAntiforgery();
+
+app.UseAuthorization();
 app.MapControllers();
 
 // app.MapGet("/", () => "Hello World!");

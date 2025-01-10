@@ -1,0 +1,53 @@
+﻿@page "/login"
+
+@inject WebPingzor.Core.IAuthService _authService
+
+<PageTitle>Login</PageTitle>
+
+<Title>Login</Title>
+
+<Form Layout="FormLayout.Vertical" Method="HttpMethod.Post" Model="@model" Name="login-form" OnFinish="OnFinish"
+  OnFinishFailed="OnFinishFailed" WrapperColSpan="8">
+  <FormItem Label="User Name">
+    <Input @bind-Value="@model.Username" />
+  </FormItem>
+  <FormItem Label="Password">
+    <InputPassword @bind-Value="@model.Password" />
+  </FormItem>
+  <FormItem Label="">
+    <Checkbox @bind-Value="model.RememberMe">Remember me</Checkbox>
+  </FormItem>
+  <FormItem>
+    <Button Type="ButtonType.Primary" HtmlType="submit">
+      Submit
+    </Button>
+  </FormItem>
+</Form>
+
+<Flex Gap="@FlexGap.Small">
+  <NavLink Href="/register">Register</NavLink>
+  <NavLink Href="/forgot-password">Forgot Password</NavLink>
+</Flex>
+
+@code
+{
+  [SupplyParameterFromForm(FormName = "login-form")]
+  private LoginModel model { get; set; } = new LoginModel();
+
+  private async Task OnFinish(EditContext editContext)
+  {
+    try
+    {
+      await _authService.Login(model.Username, model.Password);
+    }
+    catch (Exception ex)
+    {
+      Console.WriteLine(ex.Message);
+    }
+  }
+
+  private void OnFinishFailed(EditContext editContext)
+  {
+    Console.WriteLine($"Failed");
+  }
+}
