@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 using WebPingzor.Data;
 using WebPingzor.Data.Models;
@@ -22,6 +23,12 @@ public class MonitorService(PingzorDbProvider dbProvider)
   public async Task<HttpMonitor> Create(string name, string url, int interval)
   {
     using var context = _dbProvider.Create();
+
+    var alreadyExists = await context.HttpMonitors.AnyAsync(m => m.Name.ToLower() == name.ToLower());
+    if (alreadyExists)
+    {
+      throw new ValidationException("Monitor with the same name already exists");
+    }
 
     var monitor = new HttpMonitor { Name = name, Url = url, Interval = interval };
     context.HttpMonitors.Add(monitor);

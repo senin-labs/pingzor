@@ -65,7 +65,7 @@
     }
     catch (Exception ex)
     {
-
+      _logger.LogError(ex, "Failed to update monitor");
       _toasterService.Error("Error", "An error occurred while updating the monitor.");
     }
   }

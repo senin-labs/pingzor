@@ -1,14 +1,17 @@
 @page "/monitors/create"
 @rendermode InteractiveServer
 
-@inject WebPingzor.MonitorManagement.MonitorService monitorService
-@inject NavigationManager Navigation
+@inject WebPingzor.MonitorManagement.MonitorService _monitorService
+@inject NavigationManager _navigation
+@inject ILogger<CreateMonitorPage> _logger
+@inject IToasterService _toaster
 
 <PageTitle>Pingzor | Create monitor</PageTitle>
 
 <Title Level="2">Create monitor</Title>
 
-<MonitorForm Model="@model" OnSubmit="OnFormSubmit" OnValidationErrors="OnErrors" />
+<MonitorForm Model="@model" OnSubmit="OnFormSubmit" />
+<ToasterContainer />
 
 @code {
 
@@ -16,12 +19,28 @@
 
   private async Task OnFormSubmit(EditContext editContext)
   {
-    var monitor = await monitorService.Create(model.Name, model.Url, model.Interval);
-    Console.WriteLine(monitor.Id);
-  }
+    HttpMonitor? httpMonitor = null;
 
-  private void OnErrors(EditContext editContext)
-  {
-    Console.WriteLine($"Failed:");
+    try
+    {
+      httpMonitor = await _monitorService.Create(model.Name, model.Url, model.Interval);
+    }
+    catch (ValidationException ex)
+    {
+      _toaster.Error("Error creating", ex.Message);
+      return;
+    }
+    catch (Exception ex)
+    {
+      _logger.LogError(ex, "Failed to create monitor");
+      _toaster.Error("Error creating", "An error occurred while creating the monitor. Please try again.");
+      return;
+    }
+
+    if (httpMonitor != null)
+    {
+      _toaster.Success("Monitor created", "The monitor was created successfully.");
+      _navigation.NavigateTo($"/monitors/{httpMonitor.Id}");
+    }
   }
 }
