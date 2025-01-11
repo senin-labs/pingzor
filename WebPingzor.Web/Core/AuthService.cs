@@ -1,9 +1,10 @@
+using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.EntityFrameworkCore;
 using WebPingzor.Core;
 using WebPingzor.Data;
-using Microsoft.EntityFrameworkCore;
 
 namespace WebPingzor.Web.Core
 {
@@ -34,22 +35,22 @@ namespace WebPingzor.Web.Core
       using var db = _dbProvider.Create();
       var user = await db.Users.Select(u => new
       {
-        Id = u.Id,
-        Name = u.Name,
-        Email = u.Email,
-        HashedPassword = u.HashedPassword,
-        PasswordSalt = u.PasswordSalt
+        u.Id,
+        u.Name,
+        u.Email,
+        u.HashedPassword,
+        u.PasswordSalt
       }).FirstOrDefaultAsync(u => u.Email == email);
 
       if (user == null)
       {
-        throw new Exception("User or password is incorrect");
+        throw new ValidationException("User or password is incorrect");
       }
 
       var isValid = _hashingService.VerifyPassword(password, user.PasswordSalt, user.HashedPassword);
       if (!isValid)
       {
-        throw new Exception("User or password is incorrect");
+        throw new ValidationException("User or password is incorrect");
       }
 
       var claims = new List<Claim>
