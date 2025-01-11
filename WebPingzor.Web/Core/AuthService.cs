@@ -76,9 +76,10 @@ namespace WebPingzor.Web.Core
       );
     }
 
-    public Task Logout()
+    public async Task Logout()
     {
-      throw new NotImplementedException();
+      var context = _contextAccessor.HttpContext ?? throw new Exception("HttpContext is null");
+      await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
     }
   }
 }

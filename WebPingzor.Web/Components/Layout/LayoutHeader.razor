@@ -1,0 +1,17 @@
+@using Microsoft.AspNetCore.Components.Authorization
+
+<Flex Vertical Align="FlexAlign.FlexEnd" Justify="FlexJustify.Center">
+  <AuthorizeView>
+    <Authorized>
+      <span>
+        Hello, @context.User.Identity?.Name!
+        <div style="display: inline-block">
+          <LogoutButton />
+        </div>
+      </span>
+    </Authorized>
+    <NotAuthorized>
+      <span>Welcome! <NavLink href="/login">Login</NavLink></span>
+    </NotAuthorized>
+  </AuthorizeView>
+</Flex>

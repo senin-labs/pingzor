@@ -5,7 +5,9 @@
         <NavMenu />
     </Sider>
     <Layout Class="site-layout" Style=" margin-left: 200px">
-        <Header Class="site-layout-header" Style="padding: 0"></Header>
+        <Header Class="site-layout-header">
+            <LayoutHeader />
+        </Header>
         <Content Class="site-layout-page" Style="">
             @Body
         </Content>
@@ -24,10 +26,13 @@
 
     .site-layout .site-layout-header {
         background: #fff;
+        padding: 8px;
+        line-height: 48px;
     }
 
     .site-layout .site-layout-page {
         margin: 24px 16px 0;
         overflow: initial;
+
     }
 </style>

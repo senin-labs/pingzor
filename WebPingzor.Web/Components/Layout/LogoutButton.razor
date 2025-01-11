@@ -1,0 +1,23 @@
+@inject WebPingzor.Core.IAuthService _authService
+@inject NavigationManager _navigationManager
+
+<Form Method="HttpMethod.Post" Model="@model" Name="logout-form" OnFinish="OnFinish" style="display:inline-block">
+  <Button Type=" ButtonType.Link" HtmlType="submit" Style="padding:0">
+    Logout
+  </Button>
+</Form>
+
+
+@code {
+  class LogoutModel
+  {
+  }
+
+  private LogoutModel model { get; set; } = new LogoutModel();
+
+  private async Task OnFinish(EditContext editContext)
+  {
+    await _authService.Logout();
+    _navigationManager.Refresh(true);
+  }
+}
