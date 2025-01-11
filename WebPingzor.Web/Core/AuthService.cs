@@ -20,12 +20,26 @@ namespace WebPingzor.Web.Core
 
     public Task<string> GetUsername()
     {
-      throw new NotImplementedException();
+      var context = _contextAccessor.HttpContext ?? throw new Exception("HttpContext is null");
+      return Task.FromResult(context.User.Identity?.Name ?? string.Empty);
+    }
+
+    public Task<int?> GetUserId()
+    {
+      var context = _contextAccessor.HttpContext ?? throw new Exception("HttpContext is null");
+      var userId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+      if (int.TryParse(userId, out var id))
+      {
+        return Task.FromResult(id as int?);
+      }
+
+      return Task.FromResult(null as int?);
     }
 
     public Task<bool> IsAuthenticated()
     {
-      throw new NotImplementedException();
+      var context = _contextAccessor.HttpContext ?? throw new Exception("HttpContext is null");
+      return Task.FromResult(context.User.Identity?.IsAuthenticated ?? false);
     }
 
     public async Task Login(string email, string password)

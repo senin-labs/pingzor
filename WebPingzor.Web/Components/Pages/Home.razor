@@ -1,17 +1,15 @@
 ﻿@page "/"
 @using Microsoft.AspNetCore.Components.Authorization
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Pingzor | Home</PageTitle>
 
-<h1>Hello, world!</h1>
-
-Welcome to your new appp.
+<Title>Hello!</Title>
 
 <AuthorizeView>
   <Authorized>
-    <p>Hello, @context.User.Identity?.Name!</p>
+    <p>Welcome, @context.User.Identity?.Name!</p>
   </Authorized>
   <NotAuthorized>
-    <p>You're not authorized.</p>
+    <p>You're not authenticated.</p>
   </NotAuthorized>
 </AuthorizeView>

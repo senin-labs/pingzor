@@ -16,7 +16,6 @@ public static class PingzorDbSeed
     await using var context = new PingzorDbContext(options);
     await context.Database.EnsureCreatedAsync();
     await SeedUsers(context, hashingService);
-    await SeedHttpMonitors(context);
   }
 
   public static async Task SeedUsers(PingzorDbContext context, IPasswordHashingService passwordHashing)
@@ -27,11 +26,11 @@ public static class PingzorDbSeed
     }
 
     var salt = passwordHashing.GenerateSalt();
-    var hashedPassword = passwordHashing.HashPassword("password", salt);
+    var hashedPassword = passwordHashing.HashPassword("pass", salt);
 
     var users = new User[]
     {
-      new () { Name = "John Travolta", Email="john.travolta@email.com", HashedPassword = hashedPassword, PasswordSalt = salt},
+      new () { Name = "Razvan Dragomir", Email="razvan@email.com", HashedPassword = hashedPassword, PasswordSalt = salt},
       new () { Name = "Tom Cruise", Email="tom.cruise@email.com", HashedPassword = hashedPassword, PasswordSalt = salt},
       new () { Name = "Brad Pitt", Email="brad.pitt@email.com", HashedPassword = hashedPassword, PasswordSalt = salt},
       new () { Name = "Angelina Jolie", Email="angelina.jolie@email.com", HashedPassword = hashedPassword, PasswordSalt = salt},
@@ -43,20 +42,20 @@ public static class PingzorDbSeed
     }
 
     await context.SaveChangesAsync();
+
+    foreach (var user in users)
+    {
+      await SeedHttpMonitors(context, user.Id);
+    }
   }
 
-  public static async Task SeedHttpMonitors(PingzorDbContext context)
+  public static async Task SeedHttpMonitors(PingzorDbContext context, int userId)
   {
-    if (context.HttpMonitors.Any())
-    {
-      return;
-    }
-
     var httpMonitors = new HttpMonitor[]
     {
-      new () { Name = "Google", Url = "https://www.google.com", Interval = 60 },
-      new () { Name = "Bing", Url = "https://www.bing.com", Interval = 60 },
-      new () { Name = "Yahoo", Url = "https://www.yahoo.com", Interval = 60 },
+      new () { UserId = userId, Name = "Google", Url = "https://www.google.com", Interval = 60 },
+      new () { UserId = userId, Name = "Bing", Url = "https://www.bing.com", Interval = 60 },
+      new () { UserId = userId, Name = "Yahoo", Url = "https://www.yahoo.com", Interval = 120 },
     };
 
     foreach (var httpMonitor in httpMonitors)

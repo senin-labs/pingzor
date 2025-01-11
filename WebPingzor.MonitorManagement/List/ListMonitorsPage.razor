@@ -1,7 +1,10 @@
 @page "/monitors"
-@inject MonitorService monitorService
-
 @attribute [StreamRendering]
+@attribute [Authorize]
+
+@inject IAuthService _authService
+@inject PingzorDbProvider _dbProvider
+
 
 <PageTitle>Pingzor | Monitors</PageTitle>
 
@@ -13,7 +16,7 @@
 }
 else
 {
-  <Table TItem="HttpMonitor" DataSource="@monitors">
+  <Table TItem="MonitorItem" DataSource="@monitors">
   <TitleTemplate>
     <Flex Justify="FlexJustify.End" Gap="@("10")">
       <NavLink href="/monitors/create">
@@ -39,9 +42,15 @@ else
 
 
 @code {
-  private List<HttpMonitor>? monitors;
+  record MonitorItem(int Id, string Name, int Interval);
+  private List<MonitorItem>? monitors;
   protected async override Task OnInitializedAsync()
   {
-    this.monitors = await monitorService.GetAll();
+    var userId = await _authService.GetUserId();
+    using var db = _dbProvider.Create();
+    monitors = await db.HttpMonitors
+    .Where(m => m.UserId == userId)
+    .Select(m => new MonitorItem(m.Id, m.Name, m.Interval))
+    .ToListAsync();
   }
 }
