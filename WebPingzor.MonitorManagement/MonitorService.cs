@@ -1,36 +1,64 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
+using WebPingzor.Core;
 using WebPingzor.Data;
 using WebPingzor.Data.Models;
 
 namespace WebPingzor.MonitorManagement;
-public class MonitorService(PingzorDbProvider dbProvider)
+public class MonitorService(
+  PingzorDbProvider _dbProvider,
+  IAuthService _authService)
 {
-  private readonly PingzorDbProvider _dbProvider = dbProvider;
-
-  public async Task<List<HttpMonitor>> GetAll()
+  public async Task<List<T>> QueryMonitors<T>(Func<IQueryable<HttpMonitor>, IQueryable<T>> query)
   {
+    var userId = await _authService.GetUserId();
+    if (userId == null)
+    {
+      throw new ValidationException("User not found");
+    }
+
     using var context = _dbProvider.Create();
-    return await context.HttpMonitors.ToListAsync();
+    var userMonitors = context.HttpMonitors.Where(m => m.UserId == userId);
+    return await query(userMonitors).ToListAsync();
   }
 
-  public async Task<HttpMonitor?> GetById(int id)
+  public async Task<T> QueryMonitor<T>(Func<IQueryable<HttpMonitor>, IQueryable<T>> query)
   {
+    var userId = await _authService.GetUserId();
+    if (userId == null)
+    {
+      throw new ValidationException("User not found");
+    }
+
     using var context = _dbProvider.Create();
-    return await context.HttpMonitors.FindAsync(id);
+    var userMonitors = context.HttpMonitors.Where(m => m.UserId == userId);
+    var queryResult = query(userMonitors);
+    return await queryResult.FirstOrDefaultAsync();
   }
 
   public async Task<HttpMonitor> Create(string name, string url, int interval)
   {
+    var userId = await _authService.GetUserId();
+    if (userId == null)
+    {
+      throw new ValidationException("User not found");
+    }
+
     using var context = _dbProvider.Create();
 
-    var alreadyExists = await context.HttpMonitors.AnyAsync(m => m.Name.ToLower() == name.ToLower());
+    var alreadyExists = await context.HttpMonitors.AnyAsync(m => m.Name.ToLower() == name.ToLower() && m.UserId == userId);
     if (alreadyExists)
     {
       throw new ValidationException("Monitor with the same name already exists");
     }
 
-    var monitor = new HttpMonitor { Name = name, Url = url, Interval = interval };
+    var monitor = new HttpMonitor
+    {
+      UserId = userId.Value,
+      Name = name,
+      Url = url,
+      Interval = interval
+    };
     context.HttpMonitors.Add(monitor);
     await context.SaveChangesAsync();
 
@@ -39,10 +67,11 @@ public class MonitorService(PingzorDbProvider dbProvider)
 
   public async Task Update(int id, string name, string url, int interval)
   {
+    var userId = await _authService.GetUserId();
     using var context = _dbProvider.Create();
 
     var monitor = await context.HttpMonitors.FindAsync(id);
-    if (monitor == null)
+    if (monitor == null || monitor.UserId != userId)
     {
       throw new Exception("Monitor not found");
     }

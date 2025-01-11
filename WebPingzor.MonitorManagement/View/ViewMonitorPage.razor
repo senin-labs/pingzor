@@ -1,7 +1,9 @@
 @page "/monitors/{monitorId:int}"
+@attribute [Authorize]
+@rendermode InteractiveServer
+
 @inject WebPingzor.MonitorManagement.MonitorService monitorService
 
-@rendermode InteractiveServer
 
 <PageTitle>Pingzor | Monitors</PageTitle>
 
@@ -46,7 +48,7 @@ new Interval(86400, "1 day"),
   protected async override Task OnInitializedAsync()
   {
     await base.OnInitializedAsync();
-    var m = await monitorService.GetById(this.MonitorId);
+    var m = await monitorService.QueryMonitor(monitors => monitors.Where(m => m.Id == MonitorId));
 
     if (m == null)
     {

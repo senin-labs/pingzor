@@ -2,9 +2,7 @@
 @attribute [StreamRendering]
 @attribute [Authorize]
 
-@inject IAuthService _authService
-@inject PingzorDbProvider _dbProvider
-
+@inject MonitorService _monitorService
 
 <PageTitle>Pingzor | Monitors</PageTitle>
 
@@ -46,11 +44,8 @@ else
   private List<MonitorItem>? monitors;
   protected async override Task OnInitializedAsync()
   {
-    var userId = await _authService.GetUserId();
-    using var db = _dbProvider.Create();
-    monitors = await db.HttpMonitors
-    .Where(m => m.UserId == userId)
-    .Select(m => new MonitorItem(m.Id, m.Name, m.Interval))
-    .ToListAsync();
+    monitors = await _monitorService.QueryMonitors(
+    monitors => monitors.Select(m => new MonitorItem(m.Id, m.Name, m.Interval))
+    );
   }
 }

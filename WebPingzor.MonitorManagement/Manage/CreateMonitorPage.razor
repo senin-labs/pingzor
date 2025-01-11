@@ -1,5 +1,6 @@
 @page "/monitors/create"
 @rendermode InteractiveServer
+@attribute [Authorize]
 
 @inject WebPingzor.MonitorManagement.MonitorService _monitorService
 @inject NavigationManager _navigation

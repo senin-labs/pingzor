@@ -1,7 +1,8 @@
 @page "/monitors/{monitorId:int}/edit"
 @rendermode InteractiveServer
+@attribute [Authorize]
 
-@inject WebPingzor.MonitorManagement.MonitorService monitorService
+@inject WebPingzor.MonitorManagement.MonitorService _monitorService
 @inject IToasterService _toasterService
 @inject ILogger<EditMonitorPage> _logger
 
@@ -35,19 +36,21 @@
   protected async override Task OnInitializedAsync()
   {
     await base.OnInitializedAsync();
-    var m = await monitorService.GetById(this.MonitorId);
-    if (m == null)
-    {
-      errorMessage = "Monitor not found.";
-      return;
-    }
-
-    model = new MonitorForm.FormModel
+    model = await _monitorService.QueryMonitor((monitors) => monitors
+    .Where(m => m.Id == this.MonitorId)
+    .Select(m => new MonitorForm.FormModel
       {
         Name = m.Name,
         Url = m.Url,
         Interval = m.Interval
-      };
+      })
+    );
+
+    if (model == null)
+    {
+      errorMessage = "Monitor not found.";
+      return;
+    }
   }
 
   private async Task OnFormSubmit(EditContext editContext)
@@ -56,7 +59,7 @@
 
     try
     {
-      await monitorService.Update(this.MonitorId, model.Name, model.Url, model.Interval);
+      await _monitorService.Update(this.MonitorId, model.Name, model.Url, model.Interval);
       _toasterService.Success("Saved", "Monitor updated successfully!");
     }
     catch (ValidationException ex)
