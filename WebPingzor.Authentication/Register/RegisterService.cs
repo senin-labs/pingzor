@@ -14,6 +14,7 @@ namespace WebPingzor.Authentication.Register
       this._dbProvider = dbProvider;
       this._hashingService = passwordHashingService;
     }
+
     public async Task<User> Register(string name, string email, string password)
     {
       using var context = _dbProvider.Create();

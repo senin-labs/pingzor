@@ -1,44 +1,60 @@
 ﻿@page "/counters"
 @rendermode InteractiveServer
 
+@implements System.IDisposable
 @inject CounterServiceSingleton singletonService
 @inject CounterServiceScoped scopedService
 @inject CounterServiceTransient transientService
 
-
-<h1>Hello, Counters !</h1>
-
-Welcome to your new app.
+<Title>Hello, Counters !</Title>
 
 <div>
-  Singleton: @singletonService.Counter <Button OnClick="@(() => singletonService.Increment())">Increment</Button>
+  Singleton - shared value with everybody: @singletonService.Counter <Button
+    OnClick="@(() => singletonService.Increment())">Increment</Button>
 </div>
 
 <div>
-  Scoped: @scopedService.Counter <Button OnClick="@(() => scopedService.Increment())">Increment</Button>
+  Scoped - shared value for this blazor connection: @scopedService.Counter <Button
+    OnClick="@(() => scopedService.Increment())">Increment</Button>
 </div>
 
 <div>
-  Transient: @transientService.Counter <Button OnClick="@(() => transientService.Increment())">Increment</Button>
+  Transient - same value on this page: @transientService.Counter <Button
+    OnClick="@(() => transientService.Increment())">Increment</Button>
 </div>
 
 <div>
-  Local: @counter <Button OnClick="Increment">Increment</Button>
+  Local value: @counter <Button OnClick="Increment">Increment</Button>
 </div>
 
 
 @code {
 
   private int counter = 0;
+
   protected override void OnInitialized()
   {
     Console.WriteLine("CountersPage.OnInitialized");
+    this.singletonService.OnChange += OnCounterChange;
+  }
+  public void Dispose()
+  {
+    Console.WriteLine("CountersPage.Dispose");
+    this.singletonService.OnChange -= OnCounterChange;
+  }
+
+  protected async Task OnCounterChange(int newValue)
+  {
+    await InvokeAsync(() =>
+    {
+      StateHasChanged();
+    });
   }
 
   protected void Increment()
   {
     counter++;
     Console.WriteLine("LocalCounter: Incremented to {0}", counter);
-
   }
+
 }
