@@ -1,40 +1,40 @@
+using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 using WebPingzor.Core;
 using WebPingzor.Data;
 using WebPingzor.Data.Models;
 
-namespace WebPingzor.Authentication.Register
+namespace WebPingzor.Authentication.Register;
+public class RegisterService(
+  PingzorDbProvider _dbProvider,
+  IPasswordHashingService _hashingService
+)
 {
-  public class RegisterService
+  public async Task<User> Register(string name, string email, string password)
   {
-    private readonly PingzorDbProvider _dbProvider;
-    private readonly IPasswordHashingService _hashingService;
+    using var context = _dbProvider.Create();
 
-    public RegisterService(PingzorDbProvider dbProvider, IPasswordHashingService passwordHashingService)
+    var userExists = await context.Users.AnyAsync(u => u.Email.ToLower() == email.ToLower());
+    if (userExists)
     {
-      this._dbProvider = dbProvider;
-      this._hashingService = passwordHashingService;
+      throw new ValidationException("User already exists.");
     }
 
-    public async Task<User> Register(string name, string email, string password)
+    var salt = _hashingService.GenerateSalt();
+    var hashedPassword = _hashingService.HashPassword(password, salt);
+
+    var newUser = new User
     {
-      using var context = _dbProvider.Create();
+      Name = name,
+      Email = email,
+      PasswordSalt = salt,
+      HashedPassword = hashedPassword
+    };
 
-      var salt = _hashingService.GenerateSalt();
-      var hashedPassword = _hashingService.HashPassword(password, salt);
+    context.Users.Add(newUser);
 
-      var newUser = new User
-      {
-        Name = name,
-        Email = email,
-        PasswordSalt = salt,
-        HashedPassword = hashedPassword
-      };
+    await context.SaveChangesAsync();
 
-      context.Users.Add(newUser);
-
-      await context.SaveChangesAsync();
-
-      return newUser;
-    }
+    return newUser;
   }
 }

@@ -1,15 +1,20 @@
 ﻿@page "/register"
+
 @inject RegisterService _registerService
-<PageTitle>Register</PageTitle>
+@inject ILogger<RegisterPage> _logger
+@inject NavigationManager _navigationManager
+@inject IAuthService _authService
+
+<PageTitle>Pingzor | Register</PageTitle>
 
 <Title>Register</Title>
 
-<Form Layout="FormLayout.Vertical" Method="HttpMethod.Post" Model="@model" Name="register-form" OnFinish="OnFinish"
-  OnFinishFailed="OnFinishFailed" WrapperColSpan="8">
+<Form @ref="form" Layout="FormLayout.Vertical" Method="HttpMethod.Post" Model="@model" Name="register-form"
+  OnFinish="OnFinish" WrapperColSpan="8">
   <FormItem Label="Name">
     <Input @bind-Value="@model.Name" />
   </FormItem>
-  <FormItem Label="Email">
+  <FormItem Label="Email" Rules="new[] { new FormValidationRule { Required = true, Type = FormFieldType.Email } }">
     <Input @bind-Value="@model.Email" />
   </FormItem>
   <FormItem Label="Password">
@@ -28,21 +33,34 @@
 {
   [SupplyParameterFromForm(FormName = "register-form")]
   public required RegisterModel model { get; set; } = new RegisterModel();
+  private Form<RegisterModel>? form { get; set; }
 
   private async Task OnFinish(EditContext editContext)
   {
+    if (model.ConfirmPassword != model.Password)
+    {
+      form?.SetValidationMessages("ConfirmPassword", ["Password does not match"]);
+      return;
+    }
+
     try
     {
       await _registerService.Register(model.Name, model.Email, model.Password);
     }
+    catch (ValidationException ex)
+    {
+      form?.SetValidationMessages("ConfirmPassword", [ex.Message]);
+      return;
+    }
     catch (Exception ex)
     {
-      Console.WriteLine(ex.Message);
+      _logger.LogError(ex, ex.InnerException?.Message ?? ex.Message);
+      form?.SetValidationMessages("ConfirmPassword", ["An error occurred. Please try again"]);
+      return;
     }
+
+    await _authService.Login(model.Email, model.Password);
+    _navigationManager.NavigateTo("/");
   }
 
-  private void OnFinishFailed(EditContext editContext)
-  {
-    Console.WriteLine($"Failed");
-  }
 }
