@@ -6,7 +6,7 @@ COPY *.sln ./
 COPY WebPingzor.Authentication/*.csproj ./WebPingzor.Authentication/
 COPY WebPingzor.Counters/*.csproj ./WebPingzor.Counters/
 COPY WebPingzor.Data/*.csproj ./WebPingzor.Data/
-COPY WebPingzor.Monitoring/*.csproj ./WebPingzor.Monitoring/
+COPY WebPingzor.MonitorManagement/*.csproj ./WebPingzor.MonitorManagement/
 COPY WebPingzor.Todos/*.csproj ./WebPingzor.Todos/
 COPY WebPingzor.UserManagement/*.csproj ./WebPingzor.UserManagement/
 COPY WebPingzor.Web/*.csproj ./WebPingzor.Web/

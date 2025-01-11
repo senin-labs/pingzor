@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebPingzor.Counters", "WebP
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebPingzor.Data", "WebPingzor.Data\WebPingzor.Data.csproj", "{CACD5C84-4D6B-40F4-845F-F72AEC899D98}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebPingzor.Monitoring", "WebPingzor.Monitoring\WebPingzor.Monitoring.csproj", "{B4B64AA0-6E66-4B62-ACE8-27CF1CF699EC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebPingzor.MonitorManagement", "WebPingzor.MonitorManagement\WebPingzor.MonitorManagement.csproj", "{B4B64AA0-6E66-4B62-ACE8-27CF1CF699EC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebPingzor.Todos", "WebPingzor.Todos\WebPingzor.Todos.csproj", "{9D0FF54B-1D43-4C7C-807C-BB9741BC12C5}"
 EndProject

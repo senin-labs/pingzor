@@ -1,8 +1,8 @@
 using Microsoft.Extensions.DependencyInjection;
 
-namespace WebPingzor.Monitoring;
+namespace WebPingzor.MonitorManagement;
 
-public static class MonitoringModule
+public static class MonitorManagementModule
 {
   public static void ConfigureServices(IServiceCollection services)
   {

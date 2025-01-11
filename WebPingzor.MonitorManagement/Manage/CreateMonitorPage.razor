@@ -1,8 +1,9 @@
 @page "/monitors/create"
-@using WebPingzor.Data.Models
-@inject WebPingzor.Monitoring.MonitorService monitorService
-
 @rendermode InteractiveServer
+
+@using WebPingzor.Data.Models
+@inject WebPingzor.MonitorManagement.MonitorService monitorService
+@inject NavigationManager Navigation
 
 <Title Level="2">Create monitor</Title>
 

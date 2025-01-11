@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
-    <RootNamespace>WebPingzor.Monitoring</RootNamespace>
+    <RootNamespace>WebPingzor.MonitorManagement</RootNamespace>
 
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>

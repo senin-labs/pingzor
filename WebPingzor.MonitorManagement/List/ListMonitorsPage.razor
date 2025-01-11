@@ -41,8 +41,6 @@ else
   private List<HttpMonitor>? monitors;
   protected async override Task OnInitializedAsync()
   {
-    Console.WriteLine("MonitoringPage.OnInitialized");
-
     this.monitors = await monitorService.GetAll();
   }
 }

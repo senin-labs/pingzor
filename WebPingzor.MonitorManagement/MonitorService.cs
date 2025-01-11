@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using WebPingzor.Data;
 using WebPingzor.Data.Models;
 
-namespace WebPingzor.Monitoring;
+namespace WebPingzor.MonitorManagement;
 public class MonitorService(PingzorDbProvider dbProvider)
 {
   private readonly PingzorDbProvider _dbProvider = dbProvider;

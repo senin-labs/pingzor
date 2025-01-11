@@ -31,7 +31,7 @@ builder.Services.AddAntDesign();
 
 WebPingzor.Authentication.AuthenticationModule.ConfigureServices(builder.Services);
 WebPingzor.Data.DataModule.ConfigureServerServices(builder.Services);
-WebPingzor.Monitoring.MonitoringModule.ConfigureServices(builder.Services);
+WebPingzor.MonitorManagement.MonitorManagementModule.ConfigureServices(builder.Services);
 WebPingzor.Counters.CountersModule.ConfigureServices(builder.Services);
 
 var app = builder.Build();
@@ -61,14 +61,12 @@ app.UseAntiforgery();
 app.UseAuthorization();
 app.MapControllers();
 
-// app.MapGet("/", () => "Hello World!");
-
 
 app.MapRazorComponents<WebPingzor.Web.Components.App>()
     .AddInteractiveServerRenderMode()
     .AddInteractiveWebAssemblyRenderMode()
     .AddAdditionalAssemblies(
-        typeof(WebPingzor.Monitoring.MonitoringModule).Assembly,
+        typeof(WebPingzor.MonitorManagement.MonitorManagementModule).Assembly,
         typeof(WebPingzor.Authentication.AuthenticationModule).Assembly,
         typeof(WebPingzor.Counters.CountersModule).Assembly,
         typeof(WebPingzor.UserManagement.UserManagementModule).Assembly,
