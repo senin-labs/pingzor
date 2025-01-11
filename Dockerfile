@@ -4,6 +4,8 @@ WORKDIR /app
 
 COPY *.sln ./
 COPY WebPingzor.Authentication/*.csproj ./WebPingzor.Authentication/
+COPY WebPingzor.BlazorComponents/*.csproj ./WebPingzor.BlazorComponents/
+COPY WebPingzor.Core/*.csproj ./WebPingzor.Core/
 COPY WebPingzor.Counters/*.csproj ./WebPingzor.Counters/
 COPY WebPingzor.Data/*.csproj ./WebPingzor.Data/
 COPY WebPingzor.MonitorManagement/*.csproj ./WebPingzor.MonitorManagement/
