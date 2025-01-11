@@ -1,8 +1,9 @@
 @page "/monitors/{monitorId:int}"
-@using WebPingzor.Data.Models
 @inject WebPingzor.MonitorManagement.MonitorService monitorService
 
 @rendermode InteractiveServer
+
+<PageTitle>Pingzor | Monitors</PageTitle>
 
 @if (notFound)
 {

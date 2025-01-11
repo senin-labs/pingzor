@@ -1,13 +1,28 @@
 @page "/monitors/{monitorId:int}/edit"
-
-@using WebPingzor.Data.Models
-@inject WebPingzor.MonitorManagement.MonitorService monitorService
-
 @rendermode InteractiveServer
 
-<Title Level="2">Edit </Title>
+@inject WebPingzor.MonitorManagement.MonitorService monitorService
+@inject IToasterService _toasterService
+@inject ILogger<EditMonitorPage> _logger
 
-<MonitorForm Model="@model" OnSubmit="OnFormSubmit" OnValidationErrors="OnErrors" />
+<PageTitle>Pingzor | Edit @(model?.Name ?? "Monitor")</PageTitle>
+
+@if (errorMessage != null)
+{
+  <p>@errorMessage</p>
+  return;
+}
+
+@if (model == null)
+{
+  <p>Loading...</p>
+  return;
+}
+
+<Title Level="2">Edit @model.Name</Title>
+
+<MonitorForm Model="@model" OnSubmit="OnFormSubmit" />
+<ToasterContainer />
 
 
 @code {
@@ -15,7 +30,7 @@
   public required int MonitorId { get; set; }
 
   private MonitorForm.FormModel? model;
-  private bool notFound = false;
+  private string? errorMessage;
 
   protected async override Task OnInitializedAsync()
   {
@@ -23,7 +38,7 @@
     var m = await monitorService.GetById(this.MonitorId);
     if (m == null)
     {
-      notFound = true;
+      errorMessage = "Monitor not found.";
       return;
     }
 
@@ -39,11 +54,19 @@
   {
     if (model == null) return;
 
-    await monitorService.Update(this.MonitorId, model.Name, model.Url, model.Interval);
-  }
+    try
+    {
+      await monitorService.Update(this.MonitorId, model.Name, model.Url, model.Interval);
+      _toasterService.Success("Saved", "Monitor updated successfully!");
+    }
+    catch (ValidationException ex)
+    {
+      _toasterService.Error("Error", ex.Message);
+    }
+    catch (Exception ex)
+    {
 
-  private void OnErrors(EditContext editContext)
-  {
-    Console.WriteLine($"Failed:");
+      _toasterService.Error("Error", "An error occurred while updating the monitor.");
+    }
   }
 }

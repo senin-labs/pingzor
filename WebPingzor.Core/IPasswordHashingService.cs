@@ -1,9 +1,8 @@
-namespace WebPingzor.Core
+namespace WebPingzor.Core;
+
+public interface IPasswordHashingService
 {
-  public interface IPasswordHashingService
-  {
-    string HashPassword(string password, string salt);
-    string GenerateSalt();
-    bool VerifyPassword(string password, string salt, string hashedPassword);
-  }
+  string HashPassword(string password, string salt);
+  string GenerateSalt();
+  bool VerifyPassword(string password, string salt, string hashedPassword);
 }

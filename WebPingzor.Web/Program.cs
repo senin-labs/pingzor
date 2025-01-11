@@ -23,6 +23,7 @@ builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IPasswordHashingService, PasswordHashingService>();
+builder.Services.AddScoped<IToasterService, ToasterService>();
 
 builder.Services.AddAuthorization();
 builder.Services.AddCascadingAuthenticationState();
