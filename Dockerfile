@@ -8,6 +8,7 @@ COPY WebPingzor.BlazorComponents/*.csproj ./WebPingzor.BlazorComponents/
 COPY WebPingzor.Core/*.csproj ./WebPingzor.Core/
 COPY WebPingzor.Counters/*.csproj ./WebPingzor.Counters/
 COPY WebPingzor.Data/*.csproj ./WebPingzor.Data/
+COPY WebPingzor.MonitorBackgroundWorkers/*.csproj ./WebPingzor.MonitorBackgroundWorkers/
 COPY WebPingzor.MonitorManagement/*.csproj ./WebPingzor.MonitorManagement/
 COPY WebPingzor.Todos/*.csproj ./WebPingzor.Todos/
 COPY WebPingzor.UserManagement/*.csproj ./WebPingzor.UserManagement/
