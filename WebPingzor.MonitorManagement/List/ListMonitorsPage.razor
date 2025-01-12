@@ -23,6 +23,9 @@ else
     </Flex>
   </TitleTemplate>
   <ColumnDefinitions>
+    <PropertyColumn Property="c=>c.IsOnline" Width="100">
+      <OnlineStatusTag IsOnline="@context.IsOnline" />
+    </PropertyColumn>
     <PropertyColumn Property="c=>c.Name">
       <NavLink href="@string.Format("/monitors/{0}", context.Id)">@context.Name</NavLink>
     </PropertyColumn>
@@ -40,12 +43,12 @@ else
 
 
 @code {
-  record MonitorItem(int Id, string Name, int Interval);
+  record MonitorItem(int Id, string Name, int Interval, bool IsOnline);
   private List<MonitorItem>? monitors;
   protected async override Task OnInitializedAsync()
   {
     monitors = await _monitorService.QueryMonitors(
-    monitors => monitors.Select(m => new MonitorItem(m.Id, m.Name, m.Interval))
+    monitors => monitors.Select(m => new MonitorItem(m.Id, m.Name, m.Interval, m.IsOnline))
     );
   }
 }

@@ -1,0 +1,13 @@
+﻿@if (IsOnline)
+{
+  <Tag Color="TagColor.Green">up</Tag>
+}
+else
+{
+  <Tag Color="TagColor.Magenta">down</Tag>
+}
+
+@code {
+  [Parameter]
+  public bool IsOnline { get; set; }
+}

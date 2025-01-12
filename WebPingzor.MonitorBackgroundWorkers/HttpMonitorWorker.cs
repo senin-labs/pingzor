@@ -51,13 +51,16 @@ internal class HttpMonitorWorker(ILogger<HttpMonitorWorker> _logger, IServiceSco
       var (statusCode, latency) = await CheckWebsite(monitor.Url, cancelToken);
       _logger.LogInformation($"{monitor.Name}: {statusCode} ({latency}ms)");
 
+      var isOnline = statusCode >= 200 && statusCode < 300;
+
       monitor.NextCheck = DateTime.Now.AddSeconds(monitor.Interval);
+      monitor.IsOnline = isOnline;
 
       var check = new MonitorStatusCheck
       {
         MonitorId = monitor.Id,
         StatusCode = statusCode,
-        IsOnline = statusCode >= 200 && statusCode < 300,
+        IsOnline = isOnline,
         Latency = latency,
         CheckedAt = DateTime.Now
       };
@@ -79,14 +82,23 @@ internal class HttpMonitorWorker(ILogger<HttpMonitorWorker> _logger, IServiceSco
   private async Task<int> DoRequest(string url, CancellationToken cancelToken)
   {
     var _httpClient = new HttpClient();
+    _httpClient.Timeout = TimeSpan.FromSeconds(10);
+
     try
     {
       var response = await _httpClient.GetAsync(url, cancelToken);
       return (int)response.StatusCode;
     }
-    catch (HttpRequestException)
+    catch (HttpRequestException ex)
     {
-      return 0;
+      if (ex.StatusCode.HasValue)
+      {
+        return (int)ex.StatusCode.Value;
+      }
+      else
+      {
+        return 0;
+      }
     }
   }
 }

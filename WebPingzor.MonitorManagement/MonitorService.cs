@@ -59,7 +59,9 @@ public class MonitorService(
       Name = name,
       Url = url,
       Interval = interval,
-      NextCheck = nextCheck
+      NextCheck = nextCheck,
+      IsOnline = true,
+      IsPaused = false
     };
     context.HttpMonitors.Add(monitor);
     await context.SaveChangesAsync();

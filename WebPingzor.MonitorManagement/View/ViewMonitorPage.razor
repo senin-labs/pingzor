@@ -26,14 +26,7 @@
       @context.CheckedAt.ToString("yyyy-MM-dd HH:mm:ss")
     </PropertyColumn>
     <PropertyColumn Property="c=>c.IsUp">
-      @if (context.IsUp)
-      {
-        <Tag Color="TagColor.Green">up</Tag>
-      }
-      else
-      {
-        <Tag Color="TagColor.Magenta">down</Tag>
-      }
+      <OnlineStatusTag IsOnline="@context.IsUp" />
     </PropertyColumn>
     <PropertyColumn Property="c=>c.StatusCode">
       @context.StatusCode
