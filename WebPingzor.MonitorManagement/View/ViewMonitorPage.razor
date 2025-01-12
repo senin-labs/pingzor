@@ -4,6 +4,7 @@
 
 @inject PingzorDbProvider _dbProvider
 @inject IAuthService _authService
+@using AntDesign.Charts
 
 <PageTitle>Pingzor | Monitors</PageTitle>
 
@@ -20,10 +21,12 @@
 
 <Title Level="2">@monitor.Name</Title>
 
+<Line Data="@statusChecks" Config="@lineChartConfig" />
+
 <Table TItem="StatusCheck" DataSource="@statusChecks">
   <ColumnDefinitions>
     <PropertyColumn Property="c=>c.CheckedAt">
-      @context.CheckedAt.ToString("yyyy-MM-dd HH:mm:ss")
+      @context.CheckedAt
     </PropertyColumn>
     <PropertyColumn Property="c=>c.IsUp">
       <OnlineStatusTag IsOnline="@context.IsUp" />
@@ -42,10 +45,18 @@
   public int MonitorId { get; set; }
 
   private record Monitor(string Name, string Url, int Interval);
-  private record StatusCheck(DateTime CheckedAt, bool IsUp, int StatusCode, int Latency);
+  private record StatusCheck(string CheckedAt, bool IsUp, int StatusCode, int Latency);
 
   private Monitor? monitor;
   private List<StatusCheck>? statusChecks;
+
+  private LineConfig lineChartConfig = new LineConfig
+    {
+      Padding = "auto",
+      XField = "checkedAt",
+      YField = "latency",
+      Smooth = true,
+    };
 
   private string? errorMessage;
   protected async override Task OnInitializedAsync()
@@ -68,8 +79,8 @@
     this.statusChecks = await db.MonitorStatusChecks
     .AsNoTracking().Where(c => c.MonitorId == MonitorId)
     .OrderByDescending(c => c.CheckedAt)
-    .Select(c => new StatusCheck(c.CheckedAt, c.IsOnline, c.StatusCode, c.Latency))
-    .Take(10).ToListAsync();
+    .Select(c => new StatusCheck(c.CheckedAt.ToString("yyyy-MM-dd HH:mm"), c.IsOnline, c.StatusCode, c.Latency))
+    .Take(100).ToListAsync();
   }
 
 }
