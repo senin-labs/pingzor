@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="../WebPingzor.BlazorComponents/WebPingzor.BlazorComponents.csproj" />
+    <ProjectReference Include="../WebPingzor.Core/WebPingzor.Core.csproj" />
   </ItemGroup>
 
 </Project>

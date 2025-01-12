@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Server.Circuits;
 using WebPingzor.Core;
 using WebPingzor.Web.Core;
 
@@ -24,6 +25,8 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IPasswordHashingService, PasswordHashingService>();
 builder.Services.AddScoped<IToasterService, ToasterService>();
+builder.Services.AddSingleton<CircuitHandler, ConnectionTracker>();
+builder.Services.AddSingleton<IWebSocketTracker>(sp => sp.GetRequiredService<CircuitHandler>() as IWebSocketTracker);
 
 builder.Services.AddAuthorization();
 builder.Services.AddCascadingAuthenticationState();

@@ -3,7 +3,7 @@ using System.Security.Cryptography;
 using System.Text;
 
 namespace WebPingzor.Web.Core;
-internal class PasswordHashingService : IPasswordHashingService
+internal sealed class PasswordHashingService : IPasswordHashingService
 {
   public string HashPassword(string password, string salt)
   {

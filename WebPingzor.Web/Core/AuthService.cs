@@ -8,7 +8,7 @@ using WebPingzor.Data;
 
 namespace WebPingzor.Web.Core
 {
-  internal class AuthService(
+  internal sealed class AuthService(
     IHttpContextAccessor httpContextAccessor,
     IPasswordHashingService hashingService,
     PingzorDbProvider dbProvider

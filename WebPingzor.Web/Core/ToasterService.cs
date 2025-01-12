@@ -3,7 +3,7 @@ using WebPingzor.Core;
 
 namespace WebPingzor.Web.Core;
 
-internal class ToasterService(NotificationService notificationService) : IToasterService
+internal sealed class ToasterService(NotificationService notificationService) : IToasterService
 {
 #pragma warning disable CS4014 // We don't want to wait ultil the notification to dissapear
   public void Success(string title, string message)

@@ -5,6 +5,7 @@
 @inject CounterServiceSingleton singletonService
 @inject CounterServiceScoped scopedService
 @inject CounterServiceTransient transientService
+@inject WebPingzor.Core.IWebSocketTracker webSocketTracker
 
 <Title>Hello, Counters !</Title>
 
@@ -27,20 +28,35 @@
   Local value: @counter <Button OnClick="Increment">Increment</Button>
 </div>
 
+<hr />
+
+<div>
+  Connected Sockets: @connectedSockets
+</div>
+
+<div>
+  Reconnecting Sockets: @reconnectingSockets
+</div>
+
 
 @code {
 
   private int counter = 0;
+  private int connectedSockets = 0;
+  private int reconnectingSockets = 0;
 
   protected override void OnInitialized()
   {
-    Console.WriteLine("CountersPage.OnInitialized");
     this.singletonService.OnChange += OnCounterChange;
+    this.webSocketTracker.OnChange += OnSocketsChange;
+
+    UpdateCounters();
   }
+
   public void Dispose()
   {
-    Console.WriteLine("CountersPage.Dispose");
     this.singletonService.OnChange -= OnCounterChange;
+    this.webSocketTracker.OnChange -= OnSocketsChange;
   }
 
   protected async Task OnCounterChange(int newValue)
@@ -51,10 +67,40 @@
     });
   }
 
+  protected async Task OnSocketsChange(string connectionId)
+  {
+    await InvokeAsync(() =>
+    {
+      UpdateCounters();
+      StateHasChanged();
+    });
+  }
+
   protected void Increment()
   {
     counter++;
     Console.WriteLine("LocalCounter: Incremented to {0}", counter);
+  }
+
+  private void UpdateCounters()
+  {
+    int conn = 0;
+    int reconn = 0;
+
+    foreach (var state in webSocketTracker.Connections.Values)
+    {
+      if (state == Core.IWebSocketTracker.ConnectionState.Connected)
+      {
+        conn++;
+      }
+      else
+      {
+        reconn++;
+      }
+    }
+
+    connectedSockets = conn;
+    reconnectingSockets = reconn;
   }
 
 }
