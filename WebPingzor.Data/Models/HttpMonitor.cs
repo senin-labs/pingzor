@@ -15,4 +15,6 @@ public class HttpMonitor
 
   public required int Interval { get; set; }
   public required DateTime NextCheck { get; set; }
+
+  public List<MonitorStatusCheck>? StatusChecks { get; set; }
 }

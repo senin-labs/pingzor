@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using WebPingzor.Data;
+using WebPingzor.Data.Models;
 
 namespace WebPingzor.MonitorBackgroundWorkers;
 
@@ -28,6 +29,11 @@ internal class HttpMonitorWorker(ILogger<HttpMonitorWorker> _logger, IServiceSco
       {
         _logger.LogInformation("HttpMonitorWorker is stopping ...");
       }
+      catch (Exception ex)
+      {
+        _logger.LogError(ex, ex.InnerException?.Message ?? ex.Message);
+        await Task.Delay(5000, cancelToken);
+      }
     }
   }
 
@@ -46,18 +52,28 @@ internal class HttpMonitorWorker(ILogger<HttpMonitorWorker> _logger, IServiceSco
       _logger.LogInformation($"{monitor.Name}: {statusCode} ({latency}ms)");
 
       monitor.NextCheck = DateTime.Now.AddSeconds(monitor.Interval);
+
+      var check = new MonitorStatusCheck
+      {
+        MonitorId = monitor.Id,
+        StatusCode = statusCode,
+        IsOnline = statusCode >= 200 && statusCode < 300,
+        Latency = latency,
+        CheckedAt = DateTime.Now
+      };
+      db.MonitorStatusChecks.Add(check);
       await db.SaveChangesAsync(cancelToken);
     }
 
     return monitors.Count;
   }
 
-  private async Task<(int statusCode, long latency)> CheckWebsite(string url, CancellationToken cancelToken)
+  private async Task<(int statusCode, int latency)> CheckWebsite(string url, CancellationToken cancelToken)
   {
     var sw = Stopwatch.StartNew();
     var statusCode = await DoRequest(url, cancelToken);
     sw.Stop();
-    return (statusCode, sw.ElapsedMilliseconds);
+    return (statusCode, (int)sw.ElapsedMilliseconds);
   }
 
   private async Task<int> DoRequest(string url, CancellationToken cancelToken)

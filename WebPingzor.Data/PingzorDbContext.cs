@@ -8,4 +8,6 @@ public sealed class PingzorDbContext(DbContextOptions<PingzorDbContext> options)
   public DbSet<User> Users { get; set; }
 
   public DbSet<HttpMonitor> HttpMonitors { get; set; }
+
+  public DbSet<MonitorStatusCheck> MonitorStatusChecks { get; set; }
 }

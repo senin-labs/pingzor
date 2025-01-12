@@ -2,76 +2,81 @@
 @attribute [Authorize]
 @rendermode InteractiveServer
 
-@inject WebPingzor.MonitorManagement.MonitorService monitorService
-
+@inject PingzorDbProvider _dbProvider
+@inject IAuthService _authService
 
 <PageTitle>Pingzor | Monitors</PageTitle>
 
-@if (notFound)
+@if (errorMessage != null)
 {
-  <Paragraph>Monitor not found</Paragraph>
+  <Paragraph>@errorMessage</Paragraph>
+  return;
 }
-else if (monitor == null)
+@if (monitor == null)
 {
   <Paragraph>Loading</Paragraph>
+  return;
 }
-else
-{
-  <Title Level="2" Editable EditConfig="titleConfig">@monitor.Name</Title>
-}
+
+<Title Level="2">@monitor.Name</Title>
+
+<Table TItem="StatusCheck" DataSource="@statusChecks">
+  <ColumnDefinitions>
+    <PropertyColumn Property="c=>c.CheckedAt">
+      @context.CheckedAt.ToString("yyyy-MM-dd HH:mm:ss")
+    </PropertyColumn>
+    <PropertyColumn Property="c=>c.IsUp">
+      @if (context.IsUp)
+      {
+        <Tag Color="TagColor.Green">up</Tag>
+      }
+      else
+      {
+        <Tag Color="TagColor.Magenta">down</Tag>
+      }
+    </PropertyColumn>
+    <PropertyColumn Property="c=>c.StatusCode">
+      @context.StatusCode
+    </PropertyColumn>
+    <PropertyColumn Property="c=>c.Latency">
+      @context.Latency
+    </PropertyColumn>
+  </ColumnDefinitions>
+</Table>
 
 @code {
   [Parameter]
   public int MonitorId { get; set; }
-  private record Interval(int Value, string Text);
 
-  private Interval[] intervals = new[]
-  {
-new Interval(60, "1 minute"),
-new Interval(120, "2 minutes"),
-new Interval(300, "5 minutes"),
-new Interval(600, "10 minutes"),
-new Interval(1800, "30 minutes"),
-new Interval(3600, "1 hour"),
-new Interval(7200, "2 hours"),
-new Interval(14400, "4 hours"),
-new Interval(28800, "8 hours"),
-new Interval(43200, "12 hours"),
-new Interval(86400, "1 day"),
-};
+  private record Monitor(string Name, string Url, int Interval);
+  private record StatusCheck(DateTime CheckedAt, bool IsUp, int StatusCode, int Latency);
 
-  private HttpMonitor? monitor;
+  private Monitor? monitor;
+  private List<StatusCheck>? statusChecks;
 
-  TypographyEditableConfig? titleConfig;
-  private bool isSubmitting = false;
-  private bool notFound = false;
+  private string? errorMessage;
   protected async override Task OnInitializedAsync()
   {
     await base.OnInitializedAsync();
-    var m = await monitorService.QueryMonitor(monitors => monitors.Where(m => m.Id == MonitorId));
 
-    if (m == null)
+    var userId = await _authService.GetUserId();
+    using var db = _dbProvider.Create();
+
+    monitor = await db.HttpMonitors.AsNoTracking()
+    .Where(m => m.Id == MonitorId && m.UserId == userId)
+    .Select(m => new Monitor(m.Name, m.Url, m.Interval))
+    .FirstOrDefaultAsync();
+    if (monitor == null)
     {
-      notFound = true;
+      errorMessage = "Monitor not found";
+      return;
     }
-    else
-    {
-      monitor = m;
-      titleConfig = new TypographyEditableConfig
-        {
-          OnChange = OnTitleChange,
-          AutoSize = false
-        };
-    }
+
+    this.statusChecks = await db.MonitorStatusChecks
+    .AsNoTracking().Where(c => c.MonitorId == MonitorId)
+    .OrderByDescending(c => c.CheckedAt)
+    .Select(c => new StatusCheck(c.CheckedAt, c.IsOnline, c.StatusCode, c.Latency))
+    .Take(10).ToListAsync();
   }
 
-  private void OnTitleChange(string value)
-  {
-    if (monitor != null)
-    {
-      monitor.Name = value;
-      Console.WriteLine("Title changed" + " " + value);
-      @* await monitorService.Update(monitor); *@
-    }
-  }
 }
