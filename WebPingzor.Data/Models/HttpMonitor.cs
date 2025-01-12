@@ -14,4 +14,5 @@ public class HttpMonitor
   public required string Url { get; set; }
 
   public required int Interval { get; set; }
+  public required DateTime NextCheck { get; set; }
 }

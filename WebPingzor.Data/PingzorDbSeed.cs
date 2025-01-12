@@ -53,9 +53,9 @@ public static class PingzorDbSeed
   {
     var httpMonitors = new HttpMonitor[]
     {
-      new () { UserId = userId, Name = "Google", Url = "https://www.google.com", Interval = 60 },
-      new () { UserId = userId, Name = "Bing", Url = "https://www.bing.com", Interval = 60 },
-      new () { UserId = userId, Name = "Yahoo", Url = "https://www.yahoo.com", Interval = 120 },
+      new () { UserId = userId, Name = "Google", Url = "https://www.google.com", Interval = 60, NextCheck = DateTime.Now },
+      new () { UserId = userId, Name = "Bing", Url = "https://www.bing.com", Interval = 60, NextCheck = DateTime.Now },
+      new () { UserId = userId, Name = "Yahoo", Url = "https://www.yahoo.com", Interval = 120, NextCheck = DateTime.Now },
     };
 
     foreach (var httpMonitor in httpMonitors)

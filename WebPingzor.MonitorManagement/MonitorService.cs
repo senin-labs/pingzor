@@ -52,12 +52,14 @@ public class MonitorService(
       throw new ValidationException("Monitor with the same name already exists");
     }
 
+    var nextCheck = DateTime.Now.AddSeconds(5);
     var monitor = new HttpMonitor
     {
       UserId = userId.Value,
       Name = name,
       Url = url,
-      Interval = interval
+      Interval = interval,
+      NextCheck = nextCheck
     };
     context.HttpMonitors.Add(monitor);
     await context.SaveChangesAsync();
@@ -76,9 +78,13 @@ public class MonitorService(
       throw new Exception("Monitor not found");
     }
 
+    var nextCheck = DateTime.Now.AddSeconds(interval);
+    nextCheck = nextCheck < monitor.NextCheck ? nextCheck : monitor.NextCheck;
+
     monitor.Name = name;
     monitor.Url = url;
     monitor.Interval = interval;
+    monitor.NextCheck = nextCheck;
 
     await context.SaveChangesAsync();
   }
