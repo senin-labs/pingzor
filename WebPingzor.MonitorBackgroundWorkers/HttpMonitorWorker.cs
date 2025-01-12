@@ -1,0 +1,76 @@
+﻿using System.Diagnostics;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using WebPingzor.Data;
+
+namespace WebPingzor.MonitorBackgroundWorkers;
+
+internal class HttpMonitorWorker(ILogger<HttpMonitorWorker> _logger, IServiceScopeFactory _scopeFactory) : BackgroundService
+{
+  protected override async Task ExecuteAsync(CancellationToken cancelToken)
+  {
+    _logger.LogInformation("HttpMonitorWorker is starting ...");
+
+    while (!cancelToken.IsCancellationRequested)
+    {
+      try
+      {
+        var checkCount = await LoopIteration(cancelToken);
+
+        if (checkCount == 0)
+        {
+          await Task.Delay(5000, cancelToken);
+        }
+      }
+      catch (TaskCanceledException)
+      {
+        _logger.LogInformation("HttpMonitorWorker is stopping ...");
+      }
+    }
+  }
+
+  private async Task<int> LoopIteration(CancellationToken cancelToken)
+  {
+    using var scope = _scopeFactory.CreateScope();
+    var dbProvider = scope.ServiceProvider.GetRequiredService<PingzorDbProvider>();
+    using var db = dbProvider.Create();
+
+    var monitors = await db.HttpMonitors.Where(m => m.NextCheck < DateTime.Now).OrderBy(m => m.NextCheck).Take(5).ToListAsync(cancelToken);
+
+    for (var i = 0; i < monitors.Count; i++)
+    {
+      var monitor = monitors[i];
+      var (statusCode, latency) = await CheckWebsite(monitor.Url, cancelToken);
+      _logger.LogInformation($"{monitor.Name}: {statusCode} ({latency}ms)");
+
+      monitor.NextCheck = DateTime.Now.AddSeconds(monitor.Interval);
+      await db.SaveChangesAsync(cancelToken);
+    }
+
+    return monitors.Count;
+  }
+
+  private async Task<(int statusCode, long latency)> CheckWebsite(string url, CancellationToken cancelToken)
+  {
+    var sw = Stopwatch.StartNew();
+    var statusCode = await DoRequest(url, cancelToken);
+    sw.Stop();
+    return (statusCode, sw.ElapsedMilliseconds);
+  }
+
+  private async Task<int> DoRequest(string url, CancellationToken cancelToken)
+  {
+    var _httpClient = new HttpClient();
+    try
+    {
+      var response = await _httpClient.GetAsync(url, cancelToken);
+      return (int)response.StatusCode;
+    }
+    catch (HttpRequestException)
+    {
+      return 0;
+    }
+  }
+}

@@ -36,6 +36,7 @@ builder.Services.AddAntDesign();
 WebPingzor.Authentication.AuthenticationModule.ConfigureServices(builder.Services);
 WebPingzor.Data.DataModule.ConfigureServerServices(builder.Services);
 WebPingzor.MonitorManagement.MonitorManagementModule.ConfigureServices(builder.Services);
+WebPingzor.MonitorBackgroundWorkers.MonitorBackgroundWorkersModule.ConfigureServices(builder.Services);
 WebPingzor.Counters.CountersModule.ConfigureServices(builder.Services);
 
 var app = builder.Build();

@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebPingzor.Core", "WebPingz
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebPingzor.BlazorComponents", "WebPingzor.BlazorComponents\WebPingzor.BlazorComponents.csproj", "{A0D51F19-84D5-47C8-A66C-8735C71C0839}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebPingzor.MonitorBackgroundWorkers", "WebPingzor.MonitorBackgroundWorkers\WebPingzor.MonitorBackgroundWorkers.csproj", "{55F657A8-F6B2-4DE9-863C-B4D9D05A2F4B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,10 @@ Global
 		{A0D51F19-84D5-47C8-A66C-8735C71C0839}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A0D51F19-84D5-47C8-A66C-8735C71C0839}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A0D51F19-84D5-47C8-A66C-8735C71C0839}.Release|Any CPU.Build.0 = Release|Any CPU
+		{55F657A8-F6B2-4DE9-863C-B4D9D05A2F4B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{55F657A8-F6B2-4DE9-863C-B4D9D05A2F4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{55F657A8-F6B2-4DE9-863C-B4D9D05A2F4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{55F657A8-F6B2-4DE9-863C-B4D9D05A2F4B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
